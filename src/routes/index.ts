@@ -2,6 +2,7 @@ import { createRouter, createWebHistory } from "vue-router";
 
 import error from "@/view/errorView.vue";
 import home from "@/view/home.vue";
+import login from "@/view/login.vue";
 let routes = [
   {
     path: "/",
@@ -13,6 +14,11 @@ let routes = [
     path: "/:catchAll(.*)",
     name: "404",
     component: error,
+  },
+  {
+    path: "/login",
+    name: "login",
+    component: login,
   },
 ];
 // 路由
