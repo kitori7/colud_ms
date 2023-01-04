@@ -1,15 +1,14 @@
 <template>
-  <div class="error-view">errorView</div>
+  <div class="class-test">classTest</div>
 </template>
-  
+          
   <script lang="ts">
 import { defineComponent } from "vue";
 export default defineComponent({
-  name: "errorView",
+  name: "classTest",
   setup() {},
 });
 </script>
-  
-  <style lang="less">
+          
+<style lang="less">
 </style>
-  

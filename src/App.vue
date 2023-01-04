@@ -75,7 +75,7 @@ body {
 /* 设置默认字体大小 */
 body {
   font-size: 14px;
-  background-color: #f7f8fa;
+  background-color: #ecf5ff;
 }
 router-link {
   text-decoration: none;

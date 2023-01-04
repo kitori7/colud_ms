@@ -39,8 +39,10 @@
         </div>
         <div class="btn">登录</div>
         <div class="reg">
-          没有账号？
-          <span>点此注册！</span>
+          <router-link to="/register">
+            没有账号？
+            <span>点此注册！</span>
+          </router-link>
         </div>
       </div>
     </div>
@@ -76,7 +78,6 @@ export default defineComponent({
   
 <style lang="less">
 .login {
-  background-color: #ecf5ff;
   width: 100vw;
   height: 100vh;
   .content {
