@@ -3,7 +3,7 @@
     <el-header>
       <div class="global-header">
         <div class="w">
-          <span class="school-name">韶关学院</span>
+          <router-link to="/index" class="school-name">韶关学院</router-link>
           <div class="user-box">
             <span class="active"></span>
             <span class="username">用户名</span>

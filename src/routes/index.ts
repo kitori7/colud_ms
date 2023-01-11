@@ -10,6 +10,8 @@ import classCourse from "@/view/classCourse.vue";
 import classHomework from "@/view/classHomework.vue";
 import classData from "@/view/classData.vue";
 import classTest from "@/view/classTest.vue";
+
+import useHomework from "@/view/useHomework.vue";
 let routes = [
   {
     path: "/",
@@ -18,6 +20,7 @@ let routes = [
     children: [
       {
         path: "",
+        name: "none",
         redirect: "/index",
       },
       {
@@ -73,6 +76,11 @@ let routes = [
     path: "/register",
     name: "register",
     component: register,
+  },
+  {
+    path: "/use-homework",
+    name: "useHomework",
+    component: useHomework,
   },
 ];
 // 路由

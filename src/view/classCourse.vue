@@ -1,8 +1,14 @@
 <template>
   <div class="class-course">
     <div class="done-box">
-      <span class="round active-round"></span>
-      <span>已完成的任务点：0/10</span>
+      <span class="round active-round" v-if="!isTeacher"></span>
+      <span class="done" v-if="!isTeacher">已完成的任务点：0/10</span>
+      <el-button
+        style="float: right; transform: translate(-30px, 5px)"
+        type="primary"
+        v-if="isTeacher"
+        >添加课程</el-button
+      >
     </div>
     <div class="item-box">
       <div class="title">目录</div>
@@ -27,9 +33,17 @@
       
 <script lang="ts">
 import { defineComponent, ref, Ref } from "vue";
+import { useMain } from "@/store/home";
 export default defineComponent({
   name: "classCourse",
-  setup() {},
+  setup() {
+    // pinia
+    const store = useMain();
+    const { isTeacher } = store;
+    return {
+      isTeacher,
+    };
+  },
 });
 </script>
       
@@ -60,7 +74,7 @@ export default defineComponent({
     height: 40px;
     line-height: 40px;
     border-bottom: 1px solid #c5c6c6;
-    span {
+    .done {
       color: #888;
       letter-spacing: 2px;
     }

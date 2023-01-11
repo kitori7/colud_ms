@@ -1,9 +1,18 @@
 <template>
   <div class="index">
     <div class="w">
-      <div class="title">•我的课程•</div>
+      <div class="title" v-if="!isTeacher">•我的课程•</div>
+      <div class="title" v-else>
+        •所教课程•
+        <el-button
+          style="float: right; transform: translate(-30px, 5px)"
+          type="primary"
+          v-if="isTeacher"
+          >添加课程</el-button
+        >
+      </div>
       <div class="item-box">
-        <div class="item" @click="toClass">
+        <div class="item" @click="toClass('/class-menu')">
           <div class="img-box">
             <!-- todo图片适配 -->
             <div class="img"></div>
@@ -18,19 +27,19 @@
           </div>
           <div class="menu-box">
             <div class="icon-box">
-              <div class="icon-item">
+              <div class="icon-item" @click.stop="toClass('/class-course')">
                 <el-icon size="28px"><Reading /></el-icon>
                 <div>课程</div>
               </div>
-              <div class="icon-item">
+              <div class="icon-item" @click.stop="toClass('/class-homework')">
                 <el-icon size="28px"><Document /></el-icon>
                 <div>作业</div>
               </div>
-              <div class="icon-item">
+              <div class="icon-item" @click.stop="toClass('/class-data')">
                 <el-icon size="28px"><FolderRemove /></el-icon>
                 <div>资料</div>
               </div>
-              <div class="icon-item">
+              <div class="icon-item" @click.stop="toClass('/class-test')">
                 <el-icon size="28px"><DataBoard /></el-icon>
                 <div>试验</div>
               </div>
@@ -44,6 +53,7 @@
     
 <script lang="ts">
 import { defineComponent } from "vue";
+import { useMain } from "@/store/home";
 import {
   Document,
   Reading,
@@ -60,12 +70,17 @@ export default defineComponent({
     DataBoard,
   },
   setup() {
+    //pinia
+    const store = useMain();
+    const { isTeacher } = store;
     //路由跳转
     const router = useRouter();
-    const toClass = () => {
-      router.push("/class-course");
+    const toClass = (url: string) => {
+      router.push(url);
     };
     return {
+      // pinia
+      isTeacher,
       //路由跳转
       toClass,
     };
