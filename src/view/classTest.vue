@@ -19,8 +19,8 @@
           <span>未完成</span>
         </span></span
       >
-      <div class="item active" @click="toUseTest">
-        <div class="item-img">作业</div>
+      <div class="item" @click="toUseTest">
+        <div class="item-img"><img src="../assets/img/computer.png" alt=""></div>
         <div class="item-content">
           <div>实训名称</div>
           <div>作答时间：2022-12-18 17:00 至 2022-12-28 18:00</div>
@@ -87,17 +87,17 @@ export default defineComponent({
       border-bottom: 1px solid #c5c6c6;
       cursor: pointer;
       &.active {
-        .item-img {
-          background-color: #337ecc;
-        }
         .item-type {
           color: #337ecc;
         }
       }
       .item-img {
+        img{
+            width: 100%;
+            height: 100%;
+          }
         height: 60px;
         width: 60px;
-        background-color: #888;
         color: #fff;
         border-radius: 5px;
         text-align: center;
