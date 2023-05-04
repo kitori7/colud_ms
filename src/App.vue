@@ -5,7 +5,6 @@
 </template>
 <script lang="ts">
 import { defineComponent } from "vue";
-
 export default defineComponent({
   name: "App",
   setup() {},
@@ -75,7 +74,7 @@ body {
 /* 设置默认字体大小 */
 body {
   font-size: 14px;
-  background-color: #ecf5ff;
+  background-color: #e5e5e5;
 }
 router-link {
   text-decoration: none;

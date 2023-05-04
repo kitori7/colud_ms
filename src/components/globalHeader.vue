@@ -3,34 +3,89 @@
     <el-header>
       <div class="global-header">
         <div class="w">
-          <router-link to="/index" class="school-name">韶关学院</router-link>
+          <router-link to="/index" class="school-name"
+            ><img src="@/assets/img/logo.png" alt=""
+          /></router-link>
           <div class="user-box">
-            <span class="active"></span>
-            <span class="username">用户名</span>
-            <el-icon color="#fff" class="icon" size="20px"
-              ><ArrowDown
-            /></el-icon>
+            <span class="active">
+              <img :src="userInfo.avatarPath" alt="" />
+            </span>
+            <el-dropdown>
+              <div>
+                <span class="username">{{ userInfo.nickName }}</span>
+                <el-icon color="#04f2ff" class="icon" size="20px"
+                  ><ArrowDown
+                /></el-icon>
+                <div style="font-weight: 700">{{ userInfo.schoolName }}</div>
+              </div>
+
+              <template #dropdown>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="onUserInfo"
+                    >用户信息</el-dropdown-item
+                  >
+                </el-dropdown-menu>
+                <el-dropdown-menu>
+                  <el-dropdown-item @click="logout">退出登录</el-dropdown-item>
+                </el-dropdown-menu>
+              </template>
+            </el-dropdown>
           </div>
         </div>
       </div>
     </el-header>
   </el-container>
+  <userInfo ref="userInfoRef"></userInfo>
 </template>
-  
-  <script lang="ts">
-import { defineComponent } from "vue";
+
+<script lang="ts">
+import { defineComponent, ref } from "vue";
 import { ArrowDown } from "@element-plus/icons-vue";
+import { getLogout } from "@/request/api";
+import { ElMessage } from "element-plus";
+import { useRouter } from "vue-router";
+import { useMain, IUserInfo } from "@/store/home";
+import userInfo from "@/components/userInfo.vue";
 export default defineComponent({
   name: "globalHeader",
   components: {
     ArrowDown,
+    userInfo,
   },
   setup() {
-    return {};
+    //路由
+    const router = useRouter();
+    //pinia
+    const store = useMain();
+    const { userInfo } = store;
+    //登出
+    const logout = async () => {
+      getLogout().then((res) => {
+        if (res.data.code === 200) {
+          localStorage.removeItem("x-auth-token");
+          ElMessage.success(res.data.msg);
+          store.userInfo = {};
+          router.push("/login");
+        }
+      });
+    };
+    //用户信息
+    const userInfoRef = ref();
+    const onUserInfo = () => {
+      userInfoRef.value.onOpen();
+    };
+
+    return {
+      //登出
+      logout,
+      userInfo,
+      onUserInfo,
+      userInfoRef,
+    };
   },
 });
 </script>
-  
+
 <style lang="less">
 .el-header {
   padding: 0 !important;
@@ -38,9 +93,15 @@ export default defineComponent({
 .global-header {
   width: 100%;
   height: 45px;
-  background-color: #337ecc;
+  background-color: #313131;
   .w {
-    padding: 0 250px;
+    padding: 0 150px;
+    img {
+      transform: translate(0, 8px);
+      // width: 60px;
+      object-fit: cover;
+      height: 35px;
+    }
     position: relative;
     .school-name {
       line-height: 45px;
@@ -56,18 +117,43 @@ export default defineComponent({
       width: 140px;
       .active {
         display: inline-block;
-        width: 60px;
-        height: 60px;
+        width: 55px;
+        height: 55px;
         border-radius: 100%;
-        background-color: #555;
-        border: 5px solid #337ecc;
+        position: relative;
+        // overflow: hidden;
+        &::after {
+          content: "";
+          position: absolute;
+          left: -2px;
+          width: 60px;
+          height: 60px;
+          background-color: #04f2ff;
+          border-radius: 100%;
+          z-index: -1;
+        }
+        img {
+          position: absolute;
+          top: -7px;
+          width: 100%;
+          height: 100%;
+          border-radius: 100%;
+          object-fit: cover;
+        }
       }
       .username {
         line-height: 35px;
         color: #fff;
+        padding: 10px;
+        cursor: pointer;
       }
       .icon {
-        transform: translate(0, 8px);
+        transform: translate(0, 5px);
+        cursor: pointer;
+        transition: all 0.5s;
+        &:hover {
+          transform: rotate(180deg);
+        }
       }
     }
   }

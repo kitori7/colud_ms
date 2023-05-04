@@ -1,0 +1,84 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  namespace: edu
+  labels:
+    version: snapshot
+    app: edu-cloudms-ui
+  name: edu-cloudms-ui
+  annotations:
+    kubesphere.io/description: 云教学系统前端模块
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      version: snapshot
+      app: edu-cloudms-ui
+  template:
+    metadata:
+      labels:
+        version: snapshot
+        app: edu-cloudms-ui
+      annotations:
+        cni.projectcalico.org/ipv4pools: '["default-ipv4-ippool"]'
+    spec:
+      containers:
+        - name: container-fkxach
+          imagePullPolicy: IfNotPresent
+          image: '192.168.100.10:5000/edu-cloudms/cloudms-ui:SNAPSHOT'
+          ports:
+            - name: http-5173
+              protocol: TCP
+              containerPort: 5173
+          volumeMounts:
+            - name: host-time
+              mountPath: /etc/localtime
+              readOnly: true
+          livenessProbe:
+            httpGet:
+              path: /prod-api/cloudms/statics/avatar/defaultAvatar.jpg
+              port: 5173
+              scheme: HTTP
+            initialDelaySeconds: 5
+            timeoutSeconds: 1
+            periodSeconds: 10
+            successThreshold: 1
+            failureThreshold: 3
+      serviceAccount: default
+      initContainers: []
+      volumes:
+        - hostPath:
+            path: /etc/localtime
+            type: ''
+          name: host-time
+      imagePullSecrets:
+        - name: tencent-registry-ideloveyou
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 25%
+      maxSurge: 25%
+---
+apiVersion: v1
+kind: Service
+metadata:
+  namespace: edu
+  labels:
+    version: snapshot
+    app: svc-edu-cloudms-ui-node
+  annotations:
+    kubesphere.io/serviceType: statelessservice
+    kubesphere.io/description: 云教学系统前端模块外部服务
+  name: svc-edu-cloudms-ui-node
+spec:
+  sessionAffinity: None
+  selector:
+    app: edu-cloudms-ui
+    version: snapshot
+  ports:
+    - name: http-5173
+      protocol: TCP
+      port: 5173
+      targetPort: 5173
+      nodePort: 30057
+  type: NodePort

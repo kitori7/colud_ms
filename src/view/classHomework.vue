@@ -5,6 +5,7 @@
         style="float: right; transform: translate(-30px, 5px)"
         type="primary"
         v-if="isTeacher"
+        @click="homeworkOpen"
         >添加作业</el-button
       >
     </div>
@@ -23,42 +24,67 @@
         <div class="item-img">作业</div>
         <div class="item-content">
           <div>作业名称</div>
-          <div>作答时间：2022-12-18 17:00 至 2022-12-28 18:00</div>
+          <div>作答时间：2023-03-29 21:29 至 2023-03-35 21:22</div>
           <div class="item-type" v-if="!isTeacher">未完成</div>
         </div>
       </div>
     </div>
+    <homeworkDialog ref="homeworkDialogRef"></homeworkDialog>
   </div>
 </template>
-      
+
 <script lang="ts">
-import { useRouter } from "vue-router";
+import { useRouter, useRoute } from "vue-router";
 import { defineComponent, ref, Ref } from "vue";
 import { useMain } from "@/store/home";
+import { getHomeWork } from "@/request/api";
+import homeworkDialog from "@/components/homeworkDialog.vue";
 export default defineComponent({
   name: "classHomework",
+  components: {
+    homeworkDialog,
+  },
   setup() {
     //pinia
     const store = useMain();
     const { isTeacher } = store;
     //路由
     const router = useRouter();
+    const route = useRoute();
+    const { id } = route.params;
     const toUseHomework = () => {
       const url = router.resolve({
-        path: "use-homework",
+        path: "/use-homework",
       });
       window.open(url.href, "_blank");
+    };
+    //初始化
+    const List = ref([]);
+    const getList = async (id: number) => {
+      const res = (await getHomeWork(id)).data;
+      List.value = res.data;
+    };
+    getList(Number(id));
+    //作业对话框
+    const homeworkDialogRef = ref();
+    const homeworkOpen = () => {
+      homeworkDialogRef.value.onOpen();
     };
     return {
       toUseHomework,
       isTeacher,
+      List,
+      homeworkDialogRef,
+      homeworkOpen,
     };
   },
 });
 </script>
-      
+
 <style lang="less">
 .class-homework {
+  border-radius: 7px;
+  box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
   width: 100%;
   height: 86.6vh;
   background-color: #fff;
@@ -88,10 +114,11 @@ export default defineComponent({
       cursor: pointer;
       &.active {
         .item-img {
-          background-color: #337ecc;
+          background-color: #6afaf5;
+          font-weight: 700;
         }
         .item-type {
-          color: #337ecc;
+          color: #6afaf5;
         }
       }
       .item-img {

@@ -1,0 +1,93 @@
+pipeline {
+  agent {
+    node {
+      label 'nodejs'
+    }
+
+  }
+  stages {
+    stage('拉取代码') {
+      agent none
+      steps {
+        container('nodejs') {
+          git(url: 'https://gitee.com/ideloveyou/cloud-ms.git', branch: 'frontend', credentialsId: 'gitee-ideloveyou', changelog: true, poll: false)
+        }
+
+      }
+    }
+
+    stage('打包前端代码') {
+      agent none
+      steps {
+        container('nodejs') {
+          sh '''npm cache clean -f
+npm install -g n --registry=https://registry.npmmirror.com
+n v16.17.0
+npm install --registry=https://registry.npmmirror.com
+npm run build:prod
+mv dist/ deploy/'''
+        }
+
+      }
+    }
+
+    stage('构建cloudms-ui') {
+      agent none
+      steps {
+        container('nodejs') {
+          sh 'docker build -t $REGISTRY/$DOCKERHUB_NAMESPACE/cloudms-ui:SNAPSHOT -f deploy/dockerfile deploy/'
+        }
+
+      }
+    }
+
+    stage('推送cloudms-ui') {
+      agent none
+      steps {
+        container('nodejs') {
+          sh 'docker push $REGISTRY/$DOCKERHUB_NAMESPACE/cloudms-ui:SNAPSHOT'
+        }
+
+      }
+    }
+
+    stage('添加kubesphere凭证') {
+      agent none
+      steps {
+        container('nodejs') {
+          withCredentials([kubeconfigContent(credentialsId : 'demo-kubeconfig' ,variable : 'KUBECONFIG_CONFIG' ,)]) {
+            sh '''mkdir -p ~/.kube/
+echo "$KUBECONFIG_CONFIG" > ~/.kube/config'''
+          }
+
+        }
+
+      }
+    }
+
+    stage('部署cloudms-ui') {
+      agent none
+      steps {
+        container('nodejs') {
+          sh 'envsubst < deploy/Deployment.yml | kubectl replace --force -f -'
+        }
+
+      }
+    }
+
+    stage('清理虚悬镜像') {
+      agent none
+      steps {
+        container('nodejs') {
+          sh 'docker system prune -f'
+        }
+
+      }
+    }
+
+  }
+  environment {
+    REGISTRY = '192.168.100.10:5000'
+    DOCKERHUB_NAMESPACE = 'edu-cloudms'
+  }
+}

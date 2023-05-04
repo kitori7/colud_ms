@@ -10,8 +10,12 @@ import classCourse from "@/view/classCourse.vue";
 import classHomework from "@/view/classHomework.vue";
 import classData from "@/view/classData.vue";
 import classTest from "@/view/classTest.vue";
-
 import useHomework from "@/view/useHomework.vue";
+import textPage from "@/view/textPage.vue";
+import videoClass from "@/view/videoClass.vue";
+//路由守卫
+import { useMain } from "@/store/home";
+
 let routes = [
   {
     path: "/",
@@ -32,28 +36,25 @@ let routes = [
         path: "/class-menu",
         name: "classMenu",
         component: classMenu,
+        redirect: "/class-course/:id",
         children: [
           {
-            path: "/class-menu",
-            redirect: "/class-course",
-          },
-          {
-            path: "/class-course",
+            path: "/class-course/:id",
             name: "classCourse",
             component: classCourse,
           },
           {
-            path: "/class-homework",
+            path: "/class-homework/:id",
             name: "classHomework",
             component: classHomework,
           },
           {
-            path: "/class-data",
+            path: "/class-data/:id",
             name: "classData",
             component: classData,
           },
           {
-            path: "/class-test",
+            path: "/class-test/:id",
             name: "classTest",
             component: classTest,
           },
@@ -82,11 +83,33 @@ let routes = [
     name: "useHomework",
     component: useHomework,
   },
+  {
+    path: "/text-page/pjdId=:pjtId&podId=:podId",
+    name: "textPage",
+    component: textPage,
+  },
+  {
+    path: "/video/:id/:courseId",
+    name: "videoClass",
+    component: videoClass,
+  },
 ];
 // 路由
 const router = createRouter({
   history: createWebHistory(),
   routes,
+});
+
+// 路由守卫;
+router.beforeEach((to, from) => {
+  if (to.path !== "/login") {
+    const token = localStorage.getItem("Authorization");
+    if (!token) {
+      return {
+        path: "/login",
+      };
+    }
+  }
 });
 // 导出
 export default router;
