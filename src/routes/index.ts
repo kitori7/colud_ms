@@ -13,6 +13,8 @@ import classTest from "@/view/classTest.vue";
 import useHomework from "@/view/useHomework.vue";
 import textPage from "@/view/textPage.vue";
 import videoClass from "@/view/videoClass.vue";
+import studentList from "@/view/studentList.vue";
+import doHomework from "@/view/doHomework.vue";
 //路由守卫
 import { useMain } from "@/store/home";
 
@@ -79,9 +81,19 @@ let routes = [
     component: register,
   },
   {
-    path: "/use-homework",
+    path: "/use-homework/:courseId/:homeworkId",
     name: "useHomework",
     component: useHomework,
+  },
+  {
+    path: "/do-homework/:courseId/:homeworkId",
+    name: "doHomework",
+    component: doHomework,
+  },
+  {
+    path: "/student-list/:courseId/:homeworkId",
+    name: "studentList",
+    component: studentList,
   },
   {
     path: "/text-page/pjdId=:pjtId&podId=:podId",

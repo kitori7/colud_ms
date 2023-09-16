@@ -330,16 +330,17 @@ export default defineComponent({
     }
     .item-box {
       padding: 20px 30px;
-      margin: 10px 100px;
+      margin: 15px 100px;
       border-radius: 10px;
       transition: all 0.1s;
+      box-shadow: rgba(0, 0, 0, 0.1) 0px 1px 2px 0px;
       &:hover {
         box-shadow: rgba(0, 0, 0, 0.24) 0px 3px 8px;
       }
       .item {
         height: 150px;
         display: flex;
-        border-bottom: 2px solid #ebedef;
+        // border-bottom: 2px solid #ebedef;
         .img-box {
           width: 200px;
           height: 130px;
@@ -375,20 +376,26 @@ export default defineComponent({
         }
         .menu-box {
           position: relative;
-          flex: 3;
+          flex: 2;
           display: flex;
           .icon-box {
             width: 100%;
             position: absolute;
             bottom: 20px;
             display: flex;
+            justify-content: space-between;
             .icon-item {
               cursor: pointer;
               text-align: center;
-              flex: 1;
+              width: 60px;
+              height: 60px;
+              padding: 5px;
+              border-radius: 8px;
               transition: all 0.2s;
               &:hover {
-                background-color: #888;
+                box-shadow: rgba(6, 24, 44, 0.4) 0px 0px 0px 2px,
+                  rgba(6, 24, 44, 0.65) 0px 4px 6px -1px,
+                  rgba(255, 255, 255, 0.08) 0px 1px 0px inset;
               }
             }
           }

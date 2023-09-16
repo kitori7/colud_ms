@@ -40,11 +40,12 @@
             class="item"
             v-for="item1 in item.cloudCourseChapters"
             :key="item1.id"
-            @click="itemClick(item1.id)"
+            @click="itemClick(item1.id, item1.videoPath)"
           >
             <el-icon style="transform: translate(0, 25%)" size="20px"
-              ><VideoPlay
-            /></el-icon>
+              ><VideoPlay v-if="item1.videoPath !== null" />
+              <Memo v-else />
+            </el-icon>
             <span>{{ item1.chapterName }}</span>
             <el-button
               type="info"
@@ -82,8 +83,7 @@
           <el-input v-model="classFrom.chapterName" />
         </el-form-item>
         <el-form-item
-          label="上传视频文件"
-          required
+          label="上传视频文件（可选）"
           v-show="isClassHour === true"
         >
           <up-load
@@ -128,13 +128,14 @@ import {
   postChapterDelete,
 } from "@/request/api";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { VideoPlay } from "@element-plus/icons-vue";
+import { VideoPlay, Memo } from "@element-plus/icons-vue";
 import upLoad from "@/components/upLoad.vue";
 export default defineComponent({
   name: "classCourse",
   components: {
     upLoad,
     VideoPlay,
+    Memo,
   },
   setup() {
     //路由
@@ -177,11 +178,7 @@ export default defineComponent({
     const activeNames: Ref<Array<number>> = ref([]);
     const confirm = () => {
       if (isClassHour.value) {
-        if (
-          classFrom.value.chapterName &&
-          classFrom.value.levelChapter &&
-          classFrom.value.videoPath
-        ) {
+        if (classFrom.value.chapterName && classFrom.value.levelChapter) {
           //发请求
           if (classFrom.value.levelChapter) {
             activeNames.value.push(classFrom.value.levelChapter);
@@ -248,9 +245,13 @@ export default defineComponent({
       }
     };
     //item点击
-    const itemClick = (chapterId: number) => {
-      const url = router.resolve({ path: `/video/${id}/${chapterId}` });
-      window.open(url.href, "_blank");
+    const itemClick = (chapterId: number, videoPath: string) => {
+      if (videoPath !== null) {
+        const url = router.resolve({ path: `/video/${id}/${chapterId}` });
+        window.open(url.href, "_blank");
+      } else {
+        ElMessage.warning("纯文字课程待完善");
+      }
     };
     return {
       isTeacher,

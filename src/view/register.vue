@@ -170,7 +170,7 @@ export default defineComponent({
   width: 100vw;
   height: 100vh;
   background-color: #313131;
-  background-image: url("@/assets/img/login-bg.webp");
+  background-image: url("@/assets/img/login-bg.svg");
   background-size: cover;
   .content {
     box-shadow: rgba(100, 100, 111, 0.2) 0px 7px 29px 0px;

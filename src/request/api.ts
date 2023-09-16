@@ -1,4 +1,3 @@
-import { config } from "process";
 import instance from "./request";
 //拿环境变量改请求地址
 const baseApi = import.meta.env.VITE_BASE_API;
@@ -160,3 +159,64 @@ export const postFileDelete = (courseId: number, fileId: number) =>
 //老师取消授课
 export const postCourseDelete = (courseId: number) =>
   instance.post(`${baseApi}/cloudms/teacher_user/course/delete`, { courseId });
+
+//老师添加作业
+export const postAddHomework = (data: any) =>
+  instance.post(`${baseApi}/cloudms/teacher_homework/addOuterHomework`, data, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+//老师学生根据id获取作业
+export const getHomework = (courseId: number) =>
+  instance.get(`${baseApi}/cloudms/homework/listByCourseId/${courseId}`);
+
+//老师修改作业信息
+export const putUpdateHomework = (data: any) =>
+  instance.put(
+    `${baseApi}/cloudms/teacher_homework/updateOuterHomework`,
+    data,
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+// 学生教师用户获取课程作业题目信息（场景：学生做题目，教师修改题目，教师批改作业）
+export const listByHomeworkId = (homeworkId: number, studentId: number) =>
+  instance.get(
+    `${baseApi}/cloudms/homework/listByHomeworkId/${homeworkId}/${studentId}`
+  );
+
+//教师添加或者修改作业题目
+export const postOperationHomework = (data: any) =>
+  instance.post(
+    `${baseApi}/cloudms/teacher_homework/operationQuestionInsideHomework`,
+    data,
+    {
+      headers: { "Content-Type": "application/json" },
+    }
+  );
+
+export const listStuHomework = (courseId: number, homeworkId: number) =>
+  instance.get(
+    `${baseApi}/cloudms/teacher_homework/listStudentInsideHomework?courseId=${courseId}&homeworkId=${homeworkId}`
+  );
+
+//教师用户删除作业题目
+export const deleteQuestion = (questionId: number) =>
+  instance.delete(
+    `${baseApi}/cloudms/teacher_homework/deleteQuestion/${questionId}`
+  );
+
+//学生提交作业
+export const addHomeworkAnswer = (data: any) =>
+  instance.post(`${baseApi}/cloudms/student_homework/addHomeworkAnswer`, data, {
+    headers: { "Content-Type": "application/json" },
+  });
+
+//教师用户批改学生作业提交接口
+export const correctionHomework = (data: any) =>
+  instance.post(
+    `${baseApi}/cloudms/teacher_homework/correctionInsideHomework`,
+    data,
+    { headers: { "Content-Type": "application/json" } }
+  );

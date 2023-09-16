@@ -12,6 +12,7 @@ export default defineComponent({
   // 设置富文本编辑器的HTML内容
   props: {
     contentHtml: String,
+    item: Object,
   },
   setup(props: any, content: any) {
     // 获取编辑器实例html
@@ -60,7 +61,7 @@ export default defineComponent({
         // wangeditor 值发生变化的时候
         onchange() {
           // 将值instance.txt.html() 传递至父组件
-          content.emit("getWangEditorValue", instance.txt.html());
+          content.emit("getWangEditorValue", instance.txt.html(), props.item);
         },
         // 上传网络图片回调
         linkImgCallback(src: string) {

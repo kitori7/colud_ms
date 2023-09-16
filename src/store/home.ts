@@ -2,8 +2,6 @@ import { defineStore } from "pinia";
 import type { IRuleForm } from "@/components/TestCart.vue";
 import type { IPjt } from "@/view/classTest.vue";
 import type { classInfo } from "@/view/index.vue";
-// useMain  可以是 useUser、useCart 之类的名字
-// defineStore('main',{..}) 在devtools 就使用 main 这个名
 export interface IUserInfo {
   entity?: "1" | "0";
   id?: string;
@@ -24,18 +22,13 @@ export const useMain = defineStore("main", {
       requestList: [] as Array<any>,
       classInfo: {} as classInfo,
       stuPodInfo: {} as IPjt,
+      homeworkList: [] as any[],
     };
   },
   // 相当于计算属性
-  getters: {
-    doubleCount: (state) => {},
-  },
+  getters: {},
   // 相当于vuex的 mutation + action，可以同时写同步和异步的代码
-  actions: {
-    changeType() {
-      this.isTeacher = !this.isTeacher;
-    },
-  },
+  actions: {},
   //数据永久化
   persist: {
     enabled: true, //开启数据持久化

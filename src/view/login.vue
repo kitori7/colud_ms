@@ -114,8 +114,8 @@ export default defineComponent({
 .login {
   width: 100vw;
   height: 100vh;
-  background-color: #313131;
-  background-image: url("@/assets/img/login-bg.webp");
+  background-color: #e7e7e7;
+  background-image: url("@/assets/img/login-bg.svg");
   background-size: cover;
   .content {
     height: 500px;

@@ -38,7 +38,10 @@
         @click="onDownLoad(item.filePath)"
       >
         <span
-          ><div><img :src="item.src" alt="" />{{ item.fileName }}</div>
+          ><div>
+            <!-- <img :src="item.src" alt="" /> -->
+            <span class="file-name"> {{ item.fileName }}</span>
+          </div>
         </span>
         <!-- <span>
           <img src="../assets/img/.pdf.png" alt="" />{{ item.fileName }}</span
@@ -235,6 +238,15 @@ export default defineComponent({
         line-height: 48.725px;
         div {
           padding-left: 12vw;
+          // width: 100%-12vw;
+          .file-name {
+            display: inline-block;
+            width: 100%;
+            max-width: 20vw;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+          }
         }
 
         &:first-child {

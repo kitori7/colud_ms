@@ -5,7 +5,7 @@
         style="float: right; transform: translate(-30px, 5px)"
         type="primary"
         v-if="isTeacher"
-        @click="homeworkOpen"
+        @click="homeworkOpen(false)"
         >添加作业</el-button
       >
     </div>
@@ -20,16 +20,33 @@
           <span>未完成</span>
         </span></span
       >
-      <div class="item active" @click="toUseHomework">
-        <div class="item-img">作业</div>
+      <div
+        class="item"
+        :class="{ active: item.completeStatus === '已完成' }"
+        @click="toUseHomework(item.id)"
+        v-for="item in List"
+      >
+        <div class="item-img"><span>作业</span></div>
         <div class="item-content">
-          <div>作业名称</div>
-          <div>作答时间：2023-03-29 21:29 至 2023-03-35 21:22</div>
-          <div class="item-type" v-if="!isTeacher">未完成</div>
+          <div>{{ item.homeworkName }}</div>
+          <div>作答时间：{{ item.startTime }} 至 {{ item.endTime }}</div>
+          <div class="item-type" v-if="!isTeacher">
+            {{ item.completeStatus }}
+          </div>
+          {{ item.status === "1" ? "" : "作业已被禁用" }}
+        </div>
+        <div class="btn-content" v-if="isTeacher">
+          <el-button @click.stop="homeworkOpen(true, item)">修改作业</el-button>
+          <el-button type="primary" @click.stop="toStudentList(item.id)"
+            >批改作业</el-button
+          >
         </div>
       </div>
     </div>
-    <homeworkDialog ref="homeworkDialogRef"></homeworkDialog>
+    <homeworkDialog
+      ref="homeworkDialogRef"
+      @update="getList(Number(id))"
+    ></homeworkDialog>
   </div>
 </template>
 
@@ -38,7 +55,7 @@ import { useRouter, useRoute } from "vue-router";
 import { defineComponent, ref, Ref } from "vue";
 import { useMain } from "@/store/home";
 import { getHomeWork } from "@/request/api";
-import homeworkDialog from "@/components/homeworkDialog.vue";
+import homeworkDialog, { IHomeworkForm } from "@/components/homeworkDialog.vue";
 export default defineComponent({
   name: "classHomework",
   components: {
@@ -52,30 +69,52 @@ export default defineComponent({
     const router = useRouter();
     const route = useRoute();
     const { id } = route.params;
-    const toUseHomework = () => {
+    const toUseHomework = (homeworkId: number) => {
+      if (isTeacher) {
+        const url = router.resolve({
+          path: `/use-homework/${id}/${homeworkId}`,
+        });
+        window.open(url.href, "_blank");
+      } else {
+        const url = router.resolve({
+          path: `/do-homework/${id}/${homeworkId}`,
+        });
+        window.open(url.href, "_blank");
+      }
+    };
+    const toStudentList = (homeworkId: number) => {
       const url = router.resolve({
-        path: "/use-homework",
+        path: `/student-list/${id}/${homeworkId}`,
       });
       window.open(url.href, "_blank");
     };
     //初始化
-    const List = ref([]);
+    const List = ref<IHomeworkForm[]>([]);
     const getList = async (id: number) => {
       const res = (await getHomeWork(id)).data;
       List.value = res.data;
+      store.homeworkList = List.value;
     };
     getList(Number(id));
     //作业对话框
     const homeworkDialogRef = ref();
-    const homeworkOpen = () => {
-      homeworkDialogRef.value.onOpen();
+    const homeworkOpen = (isChange: boolean, item?: IHomeworkForm) => {
+      if (isChange) {
+        homeworkDialogRef.value.onOpen(isChange, item);
+      } else {
+        homeworkDialogRef.value.onOpen(isChange);
+      }
     };
+    //修改作业
     return {
       toUseHomework,
+      toStudentList,
       isTeacher,
       List,
       homeworkDialogRef,
       homeworkOpen,
+      id,
+      getList,
     };
   },
 });
@@ -110,29 +149,38 @@ export default defineComponent({
       height: 80px;
       display: flex;
       padding: 10px;
+      justify-content: space-between;
       border-bottom: 1px solid #c5c6c6;
       cursor: pointer;
       &.active {
         .item-img {
-          background-color: #6afaf5;
-          font-weight: 700;
+          span {
+            background-color: #6afaf5;
+            font-weight: 700;
+          }
         }
         .item-type {
           color: #6afaf5;
         }
       }
       .item-img {
-        height: 60px;
         width: 60px;
-        background-color: #888;
-        color: #fff;
-        border-radius: 5px;
-        text-align: center;
-        line-height: 60px;
-        font-size: 20px;
+        span {
+          display: inline-block;
+          height: 60px;
+          width: 60px;
+          background-color: #888;
+          color: #fff;
+          border-radius: 5px;
+          text-align: center;
+          line-height: 60px;
+          font-size: 20px;
+        }
       }
       .item-content {
-        margin-left: 10px;
+        margin-left: 20px;
+        flex: 1;
+        text-align-last: left;
         div {
           line-height: 21px;
           font-size: 12px;
@@ -140,6 +188,12 @@ export default defineComponent({
         div:nth-child(1) {
           font-size: 18px;
         }
+      }
+      .btn-content {
+        width: 250px;
+        display: flex;
+        justify-content: center;
+        align-items: center;
       }
     }
   }
